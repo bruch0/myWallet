@@ -28,6 +28,8 @@ border: 0px;
 border-radius: 5px;
 font-family: 'Raleway', sans-serif;
 font-size: 20px;
+pointer-events: ${props => props.loading ? 'none' : 'all'};
+background-color: ${props => props.loading ? '#c8c8c8' : 'white'};
 
 :focus {
     outline: none;
