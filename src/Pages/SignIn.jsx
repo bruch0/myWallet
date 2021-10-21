@@ -91,7 +91,6 @@ function SignIn () {
                 />
               : 'Entrar'
             }
-            {/*  */}
         </TryRequest>
         <ChangePage to='/sign-up'>Primeira vez? Cadastre-se!</ChangePage>
     </Page>
