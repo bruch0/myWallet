@@ -106,7 +106,6 @@ function SignIn () {
                     color="#FFFFFF"
                     height={100}
                     width={100}
-                    timeout={3000}
                 />
               : 'Entrar'
             }

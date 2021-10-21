@@ -4,6 +4,7 @@ import GlobalStyle from './Styles/GlobalStyles'
 import SignIn from './Pages/SignIn'
 import SignUp from './Pages/SignUp'
 import Home from './Pages/Home'
+import Transaction from './Pages/Transaction'
 
 function App () {
   return (
@@ -14,6 +15,7 @@ function App () {
                 <Route path='/' component={SignIn} exact/>
                 <Route path='/sign-up' component={SignUp} exact/>
                 <Route path='/home' component={Home} exact/>
+                <Route path='/transaction' component={Transaction} exact/>
             </Switch>
         </BrowserRouter>
     </>
