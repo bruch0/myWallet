@@ -35,7 +35,8 @@ function SignIn () {
     if (isValid) {
       setLoading(true)
       axios.post('http://localhost:4000/sign-in', { email: userInfo.email, password: userInfo.password })
-        .then(() => {
+        .then((response) => {
+          localStorage.setItem('userInfo', JSON.stringify({ token: response.data.token, user: response.data.user }))
           history.push('/home')
         })
         .catch((error) => {

@@ -1,27 +1,46 @@
-import React from 'react'
-import {
-  Page
-} from '../Styles/SignInSignUpStyles'
+import React, { useEffect, useState } from 'react'
+import { useHistory } from 'react-router'
+import { Link } from 'react-router-dom'
+import { Page } from '../Styles/SignInSignUpStyles'
 import styled from 'styled-components'
 import { RiLogoutBoxRLine } from 'react-icons/ri'
 import { AiOutlinePlusCircle, AiOutlineMinusCircle } from 'react-icons/ai'
+import axios from 'axios'
 
 function Home () {
+  const [transactions, setTransactions] = useState([])
+  const history = useHistory()
+  const { user, token } = JSON.parse(localStorage.getItem('userInfo'))
+  useEffect(() => {
+    axios.get('http://localhost:4000/transactions', { headers: { Authorization: `Bearer ${token}` } })
+      .then((response) => {
+        setTransactions(response.data)
+      })
+  }, [])
   return (
     <Page isHome={1}>
         <Topbar>
             <Greetings>
-                Olá, fulano!
+                Olá, {user}!
             </Greetings>
-            <RiLogoutBoxRLine />
-        </Topbar>
-        <Transactions>
-            <TransactionLog
-                date={'30/09'}
-                name={'Almoço'}
-                value={'59,90'}
+            <RiLogoutBoxRLine
+                onClick={() => {
+                  localStorage.removeItem('userInfo')
+                  history.push('/')
+                }}
             />
-            <Total>
+        </Topbar>
+        <Transactions isZero = {transactions.length === 0 ? 1 : 0}>
+            {transactions.length !== 0
+              ? transactions.map((transaction, index) => <TransactionLog
+                                                            date={'30/09'}
+                                                            name={'Almoço'}
+                                                            value={'59,90'}
+                                                            key={index}
+                                                        />
+              )
+              : 'Não há registros de entrada ou saída'}
+            <Total isZero = {transactions.length === 0 ? 1 : 0}>
                 <Title>SALDO</Title>
                 <Value>
                     50,00
@@ -29,14 +48,14 @@ function Home () {
             </Total>
         </Transactions>
         <Actions>
-            <Transaction>
+            <Transaction to='/transaction' state={{ type: 'input' }}>
                 <AiOutlinePlusCircle />
                 <ActionTitle>
                     Nova entrada
                 </ActionTitle>
             </Transaction>
 
-            <Transaction>
+            <Transaction to='/transaction' state={{ type: 'output' }}>
                 <AiOutlineMinusCircle />
                 <ActionTitle>
                     Nova saída
@@ -87,11 +106,18 @@ const Greetings = styled.h1`
 const Transactions = styled.section`
     width: 90%;
     height: 70%;
-    padding: 0% 3% 14% 3%;
+    padding: ${props => props.isZero ? '20%' : '0% 3% 14% 3%'};
     background-color: #FFFFFF;
     border-radius: 5px;
     overflow-y: scroll;
     position: relative;
+    display: ${props => props.isZero ? 'flex' : 'inherit'};
+    justify-content: ${props => props.isZero ? 'center' : 'inherit'};
+    align-items: ${props => props.isZero ? 'center' : 'inherit'};
+    color: ${props => props.isZero ? '#868686' : ''};
+    font-size: ${props => props.isZero ? '20px' : ''};
+    font-family: ${props => props.isZero ? 'Raleway' : ''};
+    text-align: ${props => props.isZero ? 'center' : ''};
 `
 
 const Actions = styled.div`
@@ -101,7 +127,7 @@ const Actions = styled.div`
     justify-content: space-between;
 `
 
-const Transaction = styled.button`
+const Transaction = styled(Link)`
     width: 45%;
     height: 100%;
     background-color: #a31fff;
@@ -153,22 +179,22 @@ const Name = styled.span`
     color: black;
 `
 
-const Value = styled.span`
-    font-family: 'Raleway', sans-serif;
-    font-size: 16px;
-    color: black;
-`
-
 const Total = styled.div`
     width: 85%;
     height: 7%;
     background-color: #FFFFFF;
-    display: flex;
+    display: ${props => props.isZero ? 'none' : 'flex'};
     justify-content: space-between;
     position: fixed;
     bottom: 20%;
     left: 7.5%;
     padding-top: 5%;
+`
+
+const Value = styled.span`
+    font-family: 'Raleway', sans-serif;
+    font-size: 16px;
+    color: black;
 `
 
 const Title = styled.p`
