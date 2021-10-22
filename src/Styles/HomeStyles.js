@@ -29,7 +29,7 @@ const Transactions = styled.section`
     border-radius: 5px;
     overflow-y: scroll;
     position: relative;
-    display: ${props => props.isZero ? 'flex' : 'inherit'};
+    display: ${props => props.isZero ? 'flex' : ''};
     justify-content: ${props => props.isZero ? 'center' : 'inherit'};
     align-items: ${props => props.isZero ? 'center' : 'inherit'};
     color: ${props => props.isZero ? '#868686' : ''};
@@ -112,7 +112,7 @@ const Total = styled.div`
 const Value = styled.span`
     font-family: 'Raleway', sans-serif;
     font-size: 16px;
-    color: black;
+    color: ${props => props.type === 'input' ? 'green' : 'red'}
 `
 
 const Title = styled.p`

@@ -12,13 +12,15 @@ import axios from 'axios'
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css'
 import Loader from 'react-loader-spinner'
 
+import { actionOnEnter, validateSignIn } from '../Shared/functions'
+
 function SignIn () {
   const [userInfo, setUserInfo] = useState({ email: '', password: '' })
   const [loading, setLoading] = useState(false)
   const history = useHistory()
 
   const loginOnEnter = (key) => {
-    if (key === 'Enter') {
+    if (actionOnEnter(key)) {
       validateInputs()
     }
   }
@@ -26,11 +28,7 @@ function SignIn () {
   const validateInputs = () => {
     const regexEmail = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
-    const isValid = (
-      userInfo.email.length > 0 &&
-      regexEmail.test(userInfo.email) &&
-      userInfo.password.length > 0
-    )
+    const isValid = validateSignIn(userInfo)
 
     if (isValid) {
       setLoading(true)
@@ -56,8 +54,6 @@ function SignIn () {
         ModalAlert({ title: 'Insira um email válido' })
       } else if (!userInfo.password.length > 0) {
         ModalAlert({ title: 'Insira uma senha' })
-      } else {
-        ModalAlert({ title: 'Email/senha incorretos' })
       }
     }
   }

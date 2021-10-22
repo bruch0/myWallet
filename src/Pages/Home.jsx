@@ -8,22 +8,29 @@ import {
 } from '../Styles/HomeStyles'
 import { AiOutlinePlusCircle, AiOutlineMinusCircle } from 'react-icons/ai'
 import axios from 'axios'
+import { calculateTotalBalance } from '../Shared/functions'
 
 function Home () {
   const [transactions, setTransactions] = useState([])
   const history = useHistory()
-  const { user, token } = JSON.parse(localStorage.getItem('userInfo'))
+  const userInfo = JSON.parse(localStorage.getItem('userInfo'))
+  if (!userInfo) {
+	history.push('/')
+  }
   useEffect(() => {
-    axios.get('http://localhost:4000/transactions', { headers: { Authorization: `Bearer ${token}` } })
+    axios.get('http://localhost:4000/transactions', { headers: { Authorization: `Bearer ${userInfo ? userInfo.token : ''}` } })
       .then((response) => {
         setTransactions(response.data)
       })
-  }, [])
+  }, [userInfo])
+
+  const total = calculateTotalBalance(transactions)
+
   return (
     <Page isHome={1}>
         <Topbar>
             <Greetings>
-                Olá, {user}!
+                Olá, {userInfo ? userInfo.user : ''}!
             </Greetings>
             <RiLogoutBoxRLine
                 onClick={() => {
@@ -36,17 +43,18 @@ function Home () {
             {transactions.length !== 0
               ? transactions.map((transaction, index) =>
               <TransactionLog
-                    date={'30/09'}
-                    name={'Almoço'}
-                    value={'59,90'}
+                    date={transaction.date}
+                    name={transaction.description}
+                    value={Number(transaction.value).toFixed(2).replace('.', ',')}
+                    type={transaction.type}
                     key={index}
                 />
               )
               : 'Não há registros de entrada ou saída'}
             <Total isZero = {transactions.length === 0 ? 1 : 0}>
                 <Title>SALDO</Title>
-                <Value>
-                    50,00
+                <Value type={total > 0 ? 'input' : 'output'}>
+                    {total.toFixed(2).replace('.', ',')}
                 </Value>
             </Total>
         </Transactions>
@@ -69,7 +77,7 @@ function Home () {
   )
 }
 
-function TransactionLog ({ date, name, value }) {
+function TransactionLog ({ date, name, value, type }) {
   return (
         <Log>
             <Info>
@@ -80,7 +88,7 @@ function TransactionLog ({ date, name, value }) {
                     {name}
                 </Name>
             </Info>
-            <Value>
+            <Value type={type}>
                 {value}
             </Value>
         </Log>

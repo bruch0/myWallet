@@ -7,6 +7,7 @@ import axios from 'axios'
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css'
 import Loader from 'react-loader-spinner'
 import ModalAlert from '../Shared/ModalAlert'
+import { actionOnEnter } from '../Shared/functions'
 
 function Transaction () {
   const [transaction, setTransaction] = useState({ token: '', value: '', description: '' })
@@ -28,8 +29,8 @@ function Transaction () {
   }
 
   const validateInputs = () => {
-    if (transaction.description.length < 4) {
-      ModalAlert({ title: 'Insira uma descrição com 4 caracteres ou mais' })
+    if (transaction.description.length < 5) {
+      ModalAlert({ title: 'Insira uma descrição com 5 caracteres ou mais' })
     } else if (transaction.description.length > 20) {
       ModalAlert({ title: 'Insira uma descrição com 20 caracteres ou menos' })
     } else if (transaction.value.length < 1) {
@@ -39,10 +40,10 @@ function Transaction () {
     }
   }
 
-  const { token } = JSON.parse(localStorage.getItem('userInfo'))
+  const userInfo = JSON.parse(localStorage.getItem('userInfo'))
   const sendTransaction = () => {
     setLoading(true)
-    axios.post('http://localhost:4000/transactions', { value: transaction.value, description: transaction.description, type }, { headers: { Authorization: `Bearer ${token}` } })
+    axios.post('http://localhost:4000/transactions', { value: transaction.value, description: transaction.description, type }, { headers: { Authorization: `Bearer ${userInfo ? userInfo.token : ''}` } })
       .then(() => {
         setLoading(false)
         history.push('/home')
@@ -53,7 +54,7 @@ function Transaction () {
   }
 
   const SendOnEnter = (key) => {
-    if (key === 'Enter') {
+    if (actionOnEnter(key)) {
       validateInputs()
     }
   }
