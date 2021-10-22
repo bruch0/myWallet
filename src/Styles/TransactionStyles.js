@@ -5,7 +5,7 @@ const Page = styled.main`
     width: 100%;
     height: 100vh;
     padding: 8% 0px;
-    background-color: #7d16c4;
+    background-color: #4E007F;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -22,7 +22,7 @@ const Cancel = styled.button`
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #a31fff;
+    background-color: #8910ec;
     color: white;
     font-size: 20px;
 `

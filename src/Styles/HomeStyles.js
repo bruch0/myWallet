@@ -48,7 +48,7 @@ const Actions = styled.div`
 const Transaction = styled(Link)`
     width: 45%;
     height: 100%;
-    background-color: #a31fff;
+    background-color: #8910ec;
     border: 0px;
     padding: 0px;
     margin: 0px;
@@ -112,7 +112,7 @@ const Total = styled.div`
 const Value = styled.span`
     font-family: 'Raleway', sans-serif;
     font-size: 16px;
-    color: ${props => props.type === 'input' ? 'green' : 'red'}
+    color: ${props => props.type === 'input' ? 'green' : 'red'};
 `
 
 const Title = styled.p`

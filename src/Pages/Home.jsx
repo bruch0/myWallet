@@ -17,12 +17,14 @@ function Home () {
   if (!userInfo) {
 	history.push('/')
   }
+  console.log('oi')
+  const token = userInfo ? userInfo.token : '';
   useEffect(() => {
-    axios.get('http://localhost:4000/transactions', { headers: { Authorization: `Bearer ${userInfo ? userInfo.token : ''}` } })
+    axios.get('http://localhost:4000/transactions', { headers: { Authorization: `Bearer ${token}` } })
       .then((response) => {
         setTransactions(response.data)
       })
-  }, [userInfo])
+  }, [token])
 
   const total = calculateTotalBalance(transactions)
 

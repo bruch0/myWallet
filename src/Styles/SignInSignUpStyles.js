@@ -4,7 +4,7 @@ import styled from 'styled-components'
 const Page = styled.main`
 width: 100%;
 height: 100vh;
-background-color: #7d16c4;
+background-color: #4E007F;
 display: flex;
 flex-direction: column;
 justify-content: ${props => props.isHome ? 'space-around' : 'center'};
@@ -49,7 +49,7 @@ border-radius: 5px;
 display: flex;
 justify-content: center;
 align-items: center;
-background-color: #a31fff;
+background-color: #8910ec;
 color: white;
 font-size: 20px;
 `

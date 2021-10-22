@@ -57,7 +57,6 @@ function SignIn () {
       }
     }
   }
-
   return (
     <Page>
         <AppTitle>MyWallet</AppTitle>
