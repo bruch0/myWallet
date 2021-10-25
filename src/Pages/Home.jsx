@@ -17,7 +17,6 @@ function Home () {
   if (!userInfo) {
 	history.push('/')
   }
-  console.log('oi')
   const token = userInfo ? userInfo.token : '';
   useEffect(() => {
     axios.get('http://localhost:4000/transactions', { headers: { Authorization: `Bearer ${token}` } })
