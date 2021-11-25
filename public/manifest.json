@@ -40,6 +40,6 @@
   "scope": "/",
   "orientation": "portrait",
   "display": "standalone",
-  "theme_color": "#ffffff",
+  "theme_color": "#0000ffff",
   "background_color": "#4E007F"
 }
