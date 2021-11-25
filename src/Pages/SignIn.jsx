@@ -1,96 +1,107 @@
-import React, { useState } from 'react'
-import { useHistory } from 'react-router'
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Loader from 'react-loader-spinner';
 import {
   Page,
   AppTitle,
   UserInput,
   TryRequest,
-  ChangePage
-} from '../Styles/SignInSignUpStyles'
-import ModalAlert from '../Shared/ModalAlert'
-import axios from 'axios'
-import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css'
-import Loader from 'react-loader-spinner'
+  ChangePage,
+} from '../Styles/SignInSignUpStyles';
+import { throwError } from '../Shared/throwAlert';
+import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
+import { signInUser } from '../Services/api';
+import { actionOnEnter } from '../Shared/functions';
+import { validateSignIn } from '../Shared/inputValidations';
+import { storeToken, getToken } from '../Shared/tokenManager';
+import { storeUser, getUser } from '../Shared/userManager';
 
-import { actionOnEnter, validateSignIn } from '../Shared/functions'
+function SignIn() {
+  const [userInfo, setUserInfo] = useState({ email: '', password: '' });
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-function SignIn () {
-  const [userInfo, setUserInfo] = useState({ email: '', password: '' })
-  const [loading, setLoading] = useState(false)
-  const history = useHistory()
+  useEffect(() => {
+    const user = getUser();
+    const token = getToken();
+
+    if (user && token) navigate('/home');
+  }, []);
+
+  const validateInputs = () => {
+    const validInputs = validateSignIn({ userInfo });
+
+    if (validInputs) {
+      setLoading(true);
+      signInUser({
+        email: userInfo.email,
+        password: userInfo.password,
+      })
+        .then((response) => {
+          storeToken({ token: response.data.token });
+          storeUser({ user: response.data.name });
+          navigate('/home');
+        })
+        .catch((error) => {
+          setLoading(false);
+          if (error.response.status === 404) {
+            throwError({ title: 'Email não cadastrado' });
+          } else if (error.response.status === 400) {
+            throwError({ title: 'A senha contém menos de 5 caracteres' });
+          } else if (error.response.status === 401) {
+            throwError({ title: 'Senha incorreta' });
+          }
+        });
+    }
+  };
 
   const loginOnEnter = (key) => {
     if (actionOnEnter(key)) {
-      validateInputs()
+      validateInputs();
     }
-  }
+  };
 
-  const validateInputs = () => {
-    const regexEmail = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-
-    const isValid = validateSignIn(userInfo)
-
-    if (isValid) {
-      setLoading(true)
-      axios.post('http://localhost:4000/sign-in', { email: userInfo.email, password: userInfo.password })
-        .then((response) => {
-          localStorage.setItem('userInfo', JSON.stringify({ token: response.data.token, user: response.data.user }))
-          history.push('/home')
-        })
-        .catch((error) => {
-          setLoading(false)
-          if (error.response.status === 404) {
-            ModalAlert({ title: 'Email não cadastrado' })
-          } else if (error.response.status === 400) {
-            ModalAlert({ title: 'A senha contém menos de 5 caracteres' })
-          } else if (error.response.status === 401) {
-            ModalAlert({ title: 'Senha incorreta' })
-          }
-        })
-    } else {
-      if (!userInfo.email.length > 0) {
-        ModalAlert({ title: 'Insira um email' })
-      } else if (!regexEmail.test(userInfo.email) > 0) {
-        ModalAlert({ title: 'Insira um email válido' })
-      } else if (!userInfo.password.length > 0) {
-        ModalAlert({ title: 'Insira uma senha' })
-      }
-    }
-  }
+  const inputs = [
+    {
+      placeholder: 'E-mail',
+      type: 'email',
+      value: userInfo.email,
+      onChange: (input) =>
+        setUserInfo({ ...userInfo, email: input.target.value }),
+    },
+    {
+      placeholder: 'Senha',
+      type: 'password',
+      value: userInfo.password,
+      onChange: (input) =>
+        setUserInfo({ ...userInfo, password: input.target.value }),
+    },
+  ];
 
   return (
     <Page>
-        <AppTitle>MyWallet</AppTitle>
+      <AppTitle>MyWallet</AppTitle>
+      {inputs.map((input) => (
         <UserInput
-            placeholder='E-mail'
-            type='email'
-            value={userInfo.email}
-            onChange={(input) => setUserInfo({ ...userInfo, email: input.target.value })}
-            onKeyUp={(keyboard => loginOnEnter(keyboard.nativeEvent.key))}
-            loading={loading ? 1 : 0}
+          placeholder={input.placeholder}
+          type={input.type}
+          value={input.value}
+          onChange={input.onChange}
+          onKeyUp={(keyboard) => loginOnEnter(keyboard.nativeEvent.key)}
+          loading={loading ? 1 : 0}
+          key={input.placeholder}
         />
-        <UserInput
-            placeholder='Senha'
-            type='password'
-            value={userInfo.password}
-            onChange={(input) => setUserInfo({ ...userInfo, password: input.target.value })}
-            onKeyUp={(keyboard => loginOnEnter(keyboard.nativeEvent.key))}
-            loading={loading ? 1 : 0}
-        />
-        <TryRequest onClick={() => validateInputs()}>
-            {loading
-              ? <Loader
-                    type="ThreeDots"
-                    color="#FFFFFF"
-                    height={100}
-                    width={100}
-                />
-              : 'Entrar'
-            }
-        </TryRequest>
-        <ChangePage to='/sign-up'>Primeira vez? Cadastre-se!</ChangePage>
+      ))}
+      <TryRequest onClick={validateInputs}>
+        {loading ? (
+          <Loader type="ThreeDots" color="#FFFFFF" height={100} width={100} />
+        ) : (
+          'Entrar'
+        )}
+      </TryRequest>
+      <ChangePage to="/sign-up">Primeira vez? Cadastre-se!</ChangePage>
     </Page>
-  )
+  );
 }
 
-export default SignIn
+export default SignIn;
