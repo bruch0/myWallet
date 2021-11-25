@@ -76,7 +76,7 @@ function Transaction() {
   const inputs = [
     {
       placeholder: 'Valor',
-      type: 'number',
+      type: 'tel',
       value: transaction.value,
       onChange: (input) => validInputValue(input.target.value),
       onKeyUp: (keyboard) => {
