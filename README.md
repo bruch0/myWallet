@@ -33,7 +33,7 @@ um gif da aplicação bem maneiro -->
 
 </br>
 
-## How to run 🏃‍♀️💨
+## How to run in your machine 🖥️
 
 ```
 This project relies on another repository, wich will run the server locally.
@@ -69,6 +69,20 @@ npm start
 The app will automatically start at localhost:3000 on your favorite browser
 
 </br>
+
+## How to run the tests in your machine 🖥️
+
+### Start up Cypress
+
+```bash
+npx cypress open
+```
+
+### Run the tests
+
+```bash
+Just click on run integration tests on the tab that will be opened
+```
 
 ## Tech Stack 💾
 
